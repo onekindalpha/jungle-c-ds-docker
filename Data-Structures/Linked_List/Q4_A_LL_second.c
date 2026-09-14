@@ -2,7 +2,7 @@
 
 /* CE1007/CZ1007 Data Structures
 Lab Test: Section A - Linked List Questions
-Purpose: Implementing the required functions for Question 2 */
+Purpose: Implementing the required functions for Question 4 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -27,69 +27,52 @@ typedef struct _linkedlist
 //////////////////////// function prototypes /////////////////////////////////////
 
 // You should not change the prototype of this function
-void alternateMergeLinkedList(LinkedList *ll1, LinkedList *ll2);
+void moveEvenItemsToBack(LinkedList *ll);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
-ListNode *findNode(LinkedList *ll, int index);
+ListNode * findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
-
 
 //////////////////////////// main() //////////////////////////////////////////////
 
 int main()
 {
-	LinkedList ll1, ll2;
+	LinkedList ll;
 	int c, i, j;
 	c = 1;
 	//Initialize the linked list 1 as an empty linked list
-	ll1.head = NULL;
-	ll1.size = 0;
+	ll.head = NULL;
+	ll.size = 0;
 
-	//Initialize the linked list 2 as an empty linked list
-	ll2.head = NULL;
-	ll2.size = 0;
 
-	printf("1: Insert an integer to the linked list 1:\n");
-	printf("2: Insert an integer to the linked list 2:\n");
-	printf("3: Create the alternate merged linked list:\n");
+	printf("1: Insert an integer to the linked list:\n");
+	printf("2: Move all even integers to the back of the linked list:\n");
 	printf("0: Quit:\n");
 
 	while (c != 0)
 	{
-		printf("Please input your choice(1/2/3/0): ");
+		printf("Please input your choice(1/2/0): ");
 		scanf("%d", &c);
 
 		switch (c)
 		{
 		case 1:
-			printf("Input an integer that you want to add to the linked list 1: ");
+			printf("Input an integer that you want to add to the linked list: ");
 			scanf("%d", &i);
-			j = insertNode(&ll1, ll1.size, i);
-			printf("Linked list 1: ");
-			printList(&ll1);
+			j = insertNode(&ll, ll.size, i);
+			printf("The resulting linked list is: ");
+			printList(&ll);
 			break;
 		case 2:
-			printf("Input an integer that you want to add to the linked list 2: ");
-			scanf("%d", &i);
-			j = insertNode(&ll2, ll2.size, i);
-			printf("Linked list 2: ");
-			printList(&ll2);
-			break;
-		case 3:
-			printf("The resulting linked lists after merging the given linked list are:\n");
-			alternateMergeLinkedList(&ll1, &ll2); // You need to code this function
-			printf("The resulting linked list 1: ");
-			printList(&ll1);
-			printf("The resulting linked list 2: ");
-			printList(&ll2);
-			removeAllItems(&ll1);
-			removeAllItems(&ll2);
+			moveEvenItemsToBack(&ll); // You need to code this function
+			printf("The resulting linked list after moving even integers to the back of the linked list is: ");
+			printList(&ll);
+			removeAllItems(&ll);
 			break;
 		case 0:
-			removeAllItems(&ll1);
-			removeAllItems(&ll2);
+			removeAllItems(&ll);
 			break;
 		default:
 			printf("Choice unknown;\n");
@@ -101,34 +84,38 @@ int main()
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void alternateMergeLinkedList(LinkedList *ll1, LinkedList *ll2)
+void moveEvenItemsToBack(LinkedList *ll)
 {
-    /* add your code here */
-		ListNode *cur1 = ll1->head;
-		ListNode *cur2 = ll2->head;
-		// ll1은 다음 ll1 노드가 있으면, 그 사이에 ll2 노드를 삽입 가능하고
-		// 만약 다음 ll1 노드가 없으면, 삽입할 자리가 없음
-		// ll2도 다음 노드가 없게 되면 종료함. 
-		while (cur1 != NULL && cur2 != NULL) {
-			// next1, next2를 먼저 저장함. - 하나로
-			// temp를 앞으로땡기기 (ll2에서)
-			ListNode *next1 = cur1->next;
-			ListNode *next2 = cur2->next;
-			// cur2을 cur1 뒤에 연결함. 
-			cur1->next = cur2;
-			// ll2의 시작점을 변경함
-			ll2->head = next2;
-			// cur2에 next1을 연결함. 
-			cur2->next = next1;
-			// 사이즈를 갱신함
-			ll1->size++;
-			ll2->size--;
-			// cur1, cur2를 다음 노드로 이동 
-			cur1 = next1;
-			cur2 = next2;
-		} 
-}
+	/* add your code here */
 
+	ListNode *temp = ll->head;
+	
+	ListNode evenDummy = {0, NULL};
+	ListNode oddDummy = {0, NULL};
+
+	ListNode *evenTail = &evenDummy;
+	ListNode *oddTail = &oddDummy;
+
+	while (temp != NULL) {
+		ListNode *next = temp->next;
+
+		if (temp->item % 2 != 0) {
+				oddTail->next = temp;
+				oddTail = temp;
+			}
+		else {
+				evenTail->next = temp;
+				evenTail = temp;
+			}
+		// 갱신을 한다. 
+		temp->next = NULL;
+		temp = next;
+	}
+	// 홀스리스트 다음을 짝수더미의 첫번째 노드로 한다. 
+	oddTail->next = evenDummy.next;
+	// 연결리스트의 헤더를 홀수리스트의 첫번째 노드로 한다. 
+	ll->head = oddDummy.next;
+}
 ///////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll){

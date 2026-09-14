@@ -2,7 +2,7 @@
 
 /* CE1007/CZ1007 Data Structures
 Lab Test: Section A - Linked List Questions
-Purpose: Implementing the required functions for Question 4 */
+Purpose: Implementing the required functions for Question 3 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +27,7 @@ typedef struct _linkedlist
 //////////////////////// function prototypes /////////////////////////////////////
 
 // You should not change the prototype of this function
-void moveEvenItemsToBack(LinkedList *ll);
+void moveOddItemsToBack(LinkedList *ll);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
@@ -48,7 +48,7 @@ int main()
 
 
 	printf("1: Insert an integer to the linked list:\n");
-	printf("2: Move all even integers to the back of the linked list:\n");
+	printf("2: Move all odd integers to the back of the linked list:\n");
 	printf("0: Quit:\n");
 
 	while (c != 0)
@@ -66,8 +66,8 @@ int main()
 			printList(&ll);
 			break;
 		case 2:
-			moveEvenItemsToBack(&ll); // You need to code this function
-			printf("The resulting linked list after moving even integers to the back of the linked list is: ");
+			moveOddItemsToBack(&ll); // You need to code this function
+			printf("The resulting linked list after moving odd integers to the back of the linked list is: ");
 			printList(&ll);
 			removeAllItems(&ll);
 			break;
@@ -84,65 +84,55 @@ int main()
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void moveEvenItemsToBack(LinkedList *ll)
+void moveOddItemsToBack(LinkedList *ll)
 {
 	/* add your code here */
-
+	// 연결리스트의 헤더를 temp로 한다. 
 	ListNode *temp = ll->head;
-	
-	ListNode *evenHead = NULL;
-	ListNode *evenTail = NULL;
-
-	ListNode *oddHead = NULL;
-	ListNode *oddTail = NULL;
-
-	while (temp != NULL) {
+	// 짝수리스트의 더미 변수를 만든다. 
+	ListNode evenDummy = {0, NULL};
+	// 홀수리스트의 더미 변수를 만든다. 
+	ListNode oddDummy = {0, NULL};
+	// evenTail, oddTail을 만든다.  
+	// evenDummy와 oddDummy의 주소를 넘겨준다. - 처음이라서 이런걸까?
+	ListNode *evenTail = &evenDummy;
+	ListNode *oddTail = &oddDummy;
+	// 그리고 아래에서 evenTail이나 oddTail이 계속 추가되는 상태이다. 
+	// temp가 NULL이 아닐 때까지
+	while (temp != NULL)
+	{
+		// next는 현재 노드의 다음으로 임시 변수를 만든다. 
 		ListNode *next = temp->next;
-
-		if (temp->item %2 !=0) {
-			//짝수가 아닐때 - 홀수일때. 
-			// 처음나오는 홀수면
-			if (oddHead == NULL) {
-				oddHead = temp;
-				oddTail = temp;
-			}
-			// 처음나오는 홀수가 아니면
-			else {
-				oddTail->next = temp;
-				oddTail = temp;
-			}
+		// temp의 값이 짝수면
+		if (temp->item %2 ==0) 
+		{
+			//짝수리스트의 마지막의 다음을 temp로 연결한다. 
+			evenTail->next = temp;
+			//짝수리스트의 마지막을 temp로 한다. 
+			evenTail = temp;
 		}
-		else {
-			//처음나오는 짝수면
-			if (evenHead == NULL) {
-				evenHead = temp;
-				evenTail = temp;
-			}
-			// 처음 나오는 짝수가 아니라면
-			else {
-				evenTail->next = temp;
-				evenTail = temp;
-			}
+		else
+		{
+			// 홀스리스트의 마지막의 다음을 temp로 연결한다. 
+			oddTail->next = temp;
+			// 홀수리스트의 마지막을 temp로 한다. 
+			oddTail = temp;
 		}
-								// 갱신을 한다. 
-	temp->next = NULL;
-	temp = next;
+		// temp의 다음을 NULL 초기화할 수 밖에 없다. 
+		temp->next = NULL;
+		// temp를 계속 next로 갱신해줘야 한다. 
+		temp = next;
 	}
-	// 짝수리스트가 뒤로 보내야 하니까. 
-	// while문이 종료된 이후에
-	// 홀수리스트(헤드)가 없으면 짝수리스트의 헤드가 헤드가 된다. 
-	// 만약 홀수리스트(헤드)가 있으면 짝수리스트 tail에 다음을 head로 연결한다. 
-	if (oddHead == NULL) {
-		ll->head = evenHead;
-	}
-	else {
-		oddTail->next = evenHead;
-		ll->head = oddHead;
-	}
+	// while문 종료 이후에, 
+	// 최종리스트를 만들기 위해 짝수리스트 뒤에 홀수리스트를 연결한다. 
+	evenTail->next = oddDummy.next;
+	// 완성된 연결리스트의 첫번째 실제 노드를 head로 연결된다.
+	// evenDummy.next가 실제 첫번째 노드이다.
+	// evenDummy 자체는 첫번째 노드 전을 가리키고 있는 것이다. 
+	ll->head = evenDummy.next;														
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll){
 
