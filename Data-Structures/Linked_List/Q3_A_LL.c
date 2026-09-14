@@ -128,7 +128,9 @@ void moveOddItemsToBack(LinkedList *ll)
 				oddTail = temp;
 			}
 		}
+		// temp를 계속 갱신해줘야 함. 
 		temp->next = NULL;
+		// temp를 다음으로 넘김. 
 		temp = next;
 	}
 	// while문 종료 후 
