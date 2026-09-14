@@ -87,7 +87,60 @@ int main()
 void moveEvenItemsToBack(LinkedList *ll)
 {
 	/* add your code here */
+
+	ListNode *temp = ll->head;
+	
+	ListNode *evenHead = NULL;
+	ListNode *evenTail = NULL;
+
+	ListNode *oddHead = NULL;
+	ListNode *oddTail = NULL;
+
+	while (temp != NULL) {
+		ListNode *next = temp->next;
+
+		if (temp->item %2 !=0) {
+			//짝수가 아닐때 - 홀수일때. 
+			// 처음나오는 홀수면
+			if (oddHead == NULL) {
+				oddHead = temp;
+				oddTail = temp;
+			}
+			// 처음나오는 홀수가 아니면
+			else {
+				oddTail->next = temp;
+				oddTail = temp;
+			}
+		}
+		else {
+			//처음나오는 짝수면
+			if (evenHead == NULL) {
+				evenHead = temp;
+				evenTail = temp;
+			}
+			// 처음 나오는 짝수가 아니라면
+			else {
+				evenTail->next = temp;
+				evenTail = temp;
+			}
+		}
+								// 갱신을 한다. 
+	temp->next = NULL;
+	temp = next;
+	}
+	// 짝수리스트가 뒤로 보내야 하니까. 
+	// while문이 종료된 이후에
+	// 홀수리스트(헤드)가 없으면 짝수리스트의 헤드가 헤드가 된다. 
+	// 만약 홀수리스트(헤드)가 있으면 짝수리스트 tail에 다음을 head로 연결한다. 
+	if (oddHead == NULL) {
+		ll->head = evenHead;
+	}
+	else {
+		oddTail->next = evenHead;
+		ll->head = oddHead;
+	}
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 
