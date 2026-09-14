@@ -89,6 +89,8 @@ void RecursiveReverse(ListNode **ptrHead)
 {
 	/* add your code here */
 	// 노드가 하나도 없거나, 노드가 하나뿐이거나
+	// 유효성 확인
+	// 재귀 기저조건
 	if (*ptrHead == NULL || (*ptrHead)->next ==NULL)
 	{
 		return;
@@ -100,7 +102,7 @@ void RecursiveReverse(ListNode **ptrHead)
 	// 나머지를 먼저 뒤집음
 	RecursiveReverse(&rest);
 	
-	// first를 뒤집힌 리스트 뒤에 연결
+	// first를 뒤집힌 리스트 뒤에 연결-어려움.
 	first->next->next = first;
 	first->next = NULL;
 

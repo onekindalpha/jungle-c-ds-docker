@@ -108,7 +108,8 @@ void alternateMergeLinkedList(LinkedList *ll1, LinkedList *ll2)
 		ListNode *cur2 = ll2->head;
 
 		while (cur1 != NULL && cur2 != NULL) {
-			// next1, next2를 먼저 저장함. 
+			// next1, next2를 먼저 저장함. - 하나로
+			// temp를 앞으로땡기기 (ll2에서)
 			ListNode *next1 = cur1->next;
 			ListNode *next2 = cur2->next;
 			// cur2을 cur1 뒤에 연결함. 
