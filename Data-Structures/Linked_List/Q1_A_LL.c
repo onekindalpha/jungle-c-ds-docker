@@ -11,11 +11,14 @@ Purpose: Implementing the required functions for Question 1 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
+// 실제로 정의한 구조체 타입과
+// 그 구조체 타입에 붙인 별칭(alias)
 typedef struct _listnode{
 	int item;
 	struct _listnode *next;
 } ListNode;			// You should not change the definition of ListNode
-
+// 실제로 정의한 구조체 타입과
+// 그 구조체 타입에 붙인 별칭(alias)
 typedef struct _linkedlist{
 	int size;
 	ListNode *head;
@@ -26,7 +29,6 @@ typedef struct _linkedlist{
 
 //You should not change the prototype of this function
 int insertSortedLL(LinkedList *ll, int item);
-
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
 ListNode *findNode(LinkedList *ll, int index);
@@ -61,6 +63,7 @@ int main()
 		case 1:
 			printf("Input an integer that you want to add to the linked list: ");
 			scanf("%d", &i);
+			// 여기서 삽입할 값을 받고 있음. 
 			j = insertSortedLL(&ll, i);
 			printf("The resulting linked list is: ");
 			printList(&ll);
@@ -88,11 +91,49 @@ int main()
 
 //////////////////////////////////////////////////////////////////////////////////
 
-int insertSortedLL(LinkedList *ll, int item)
-{
+int insertSortedLL(LinkedList *ll, int item) {
 	/* add your code here */
+	// 연결리스트의 첫번째를 가리키도록 한다. 
+	ListNode *prev = NULL;
+	ListNode *temp = ll->head;
+	// 인덱스를 반환하려면 인덱스 변수를 갱신해야 함.
+	int index = 0;
+	// 현재 노드의 item이 삽입하려는 item보다 작은 동안 temp를 다음 노드로 이동시킨다.  
+	while (temp != NULL && temp->item < item)
+	{
+		prev = temp;
+		temp = temp->next;
+		index++;
+	} 
+	// temp == NULL이면 리스트의 끝까지 이동하여 더 이상 비교할 노드가 없는 상태이다. 
+	if (temp != NULL && item == temp->item)
+	{
+		return -1;
+	}
+	// 맨 앞 / 중간 / 맨 뒤 중 적절한 위치에 삽입한다. 
+	// 새로운 노드에 대한 메모리 동적 할당을 한다.
+	ListNode *new_node = malloc(sizeof(ListNode));
+	// prev == NULL 이면 이전 노드가 없는 상태이므로 새 노드를 맨 앞에 삽입한다. 
+	if (prev == NULL) {
+		// 새 노드의 item에 삽입하려는 item 값을 저장한다. 
+		new_node->item = item;
+		// 새 노드의 next가 기존 첫 노드 temp를 가리키도록 한다. 
+		new_node->next = temp;
+		// ll->head가 새 노드를 가리키도록 변경한다. 
+		ll->head = new_node;
+	}
+	else {
+		// 새 노드의 item에 ㅅ답입하려는 정수값을 저장한다. 
+		new_node->item = item;
+		// 이전 노드(prev)의 next가 new_node를 가리키도록 변경한다. 
+		prev->next = new_node;
+		// new_node의 next가 temp를 가리키도록 한다. 
+		new_node->next = temp;
+	}
+	// 연결리스트의 노드 개수(size)를 1 증가시킨다. 
+	ll->size++;
+	return index;
 }
-
 ///////////////////////////////////////////////////////////////////////////////////
 
 void printList(LinkedList *ll){
