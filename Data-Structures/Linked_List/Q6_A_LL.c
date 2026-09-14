@@ -86,9 +86,39 @@ int main()
 
 ////////////////////////////////////////////////////////////////////////
 
-int moveMaxToFront(ListNode **ptrHead)
+int moveMaxToFront(ListNode **ptrhead)
 {
     /* add your code here */
+		ListNode *temp = *ptrhead;
+		ListNode *max = *ptrhead;
+		ListNode *prev = NULL;
+		ListNode *maxprev = NULL;
+		// 1. max와 maxprev찾는 과정
+		while (temp != NULL) {
+			if (temp->item > max->item)
+			{
+				max = temp;
+				maxprev = prev;
+			}
+			prev = temp;
+			temp = temp->next;
+		}
+		//2. max가 이미 맨 앞인지
+		if (maxprev == NULL) {
+			return 0;
+		}
+		//3. max가 중간 / 뒤에 있으면 앞으로 이동하기. 
+		// max_prev와 max_next를 연결짓는다. 
+		maxprev->next = max->next;
+		// max_next를 *ptrHead로 한다. 		
+		max->next = *ptrhead;
+		// *ptrhead를 max로 한다.
+		*ptrhead = max;
+		//최댓값 이동
+		return 0;
+
+		
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////
