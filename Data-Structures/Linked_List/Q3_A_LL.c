@@ -115,6 +115,19 @@ void moveOddItemsToBack(LinkedList *ll)
 				evenTail = temp;
 			}
 		}
+		else
+		{
+			if (oddHead == NULL)
+			{
+				oddHead = temp;
+				oddTail = temp;
+			}
+			else
+			{
+				oddTail->next = temp;
+				oddTail = temp;
+			}
+		}
 		temp->next = NULL;
 		temp = next;
 	}
@@ -127,7 +140,7 @@ void moveOddItemsToBack(LinkedList *ll)
 	else 
 	//짝수가 있는경우
 		{
-		// head는 위치만 바꿔주면 되고
+		// 첫번째 노드인 경우 head와 tail을 설정
 		// tail의 다음을 temp로 바꿈
 		evenTail->next = oddHead;
 		// tail의 위치를 바꿈.
