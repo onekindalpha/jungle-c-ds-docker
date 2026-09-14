@@ -27,6 +27,8 @@ typedef struct _linkedlist
 //////////////////////// function prototypes /////////////////////////////////////
 
 // You should not change the prototype of this function
+// 실행 결과로 정수 하나를 반환한다. 
+// head 포인터 자체를 수정할 수 있도록 head의 주소를 받는다. 
 int moveMaxToFront(ListNode **ptrHead);
 
 void printList(LinkedList *ll);
