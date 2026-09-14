@@ -87,7 +87,53 @@ int main()
 void moveOddItemsToBack(LinkedList *ll)
 {
 	/* add your code here */
-}
+	ListNode *temp = ll->head;
+	
+	ListNode *evenHead = NULL;
+	ListNode *evenTail = NULL;
+
+	ListNode *oddHead = NULL;
+	ListNode *oddTail = NULL;
+
+	while (temp != NULL)
+	{
+		ListNode *next = temp->next;
+		// temp의 값이 짝수면
+		if (temp->item %2 ==0) 
+		{
+			if (evenHead == NULL) 
+			{
+				evenHead = temp;
+				evenTail = temp;
+			}
+			else 
+			{
+				// head는 위치만 바꿔주면 되고
+				// tail의 다음은 temp로 바꿈
+				evenTail->next = temp;
+				// tail의 위치를 바꿈. 
+				evenTail = temp;
+			}
+		}
+		temp->next = NULL;
+		temp = next;
+	}
+	// while문 종료 후 
+	//짝수가 하나도 없는경우
+	if (evenHead == NULL)
+		{
+			ll->head = oddHead;
+		}
+	else 
+	//짝수가 있는경우
+		{
+		// head는 위치만 바꿔주면 되고
+		// tail의 다음을 temp로 바꿈
+		evenTail->next = oddHead;
+		// tail의 위치를 바꿈.
+		ll->head = evenHead;
+		}
+	}
 
 ///////////////////////////////////////////////////////////////////////////////////
 
