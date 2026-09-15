@@ -122,13 +122,11 @@ void reverse(Queue *q)
 	// 임시보조도구인 스택에 큐에있는것들을 팝해서
 	while (!isEmptyQueue(q))
 	{
-		int item = dequeue(q);
-		push(&newstack, item);
+		push(&newstack, dequeue(q));
 	}
 	while (!isEmptyStack(&newstack))
 	{
-		int item = pop(&newstack);
-		enqueue(q, item);
+		enqueue(q, pop(&newstack));
 	}
 }
 
