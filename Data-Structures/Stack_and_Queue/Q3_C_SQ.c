@@ -108,7 +108,8 @@ int main()
 int isStackPairwiseConsecutive(Stack *s)
 {
 	/* add your code here */
-	if (s->ll.size % 2 != 0)
+	// 스택의 요소 개수가 홀수이거나, 빈스택이라면
+	if (s->ll.size % 2 != 0 || s->ll.size == 0)
 	{
 		return 0;
 	}
