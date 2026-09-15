@@ -130,12 +130,17 @@ void removeEvenValues(Stack *s)
 	{
 		push(&stack, pop(s)); // 원래 스택에서 아이템을 꺼내 임시 스택에 넣음.
 	}
+	// Stack result; // 2단계 결과를 담을 새 스택(필터링 + 순서 복구 담당)
+	// result.ll.head = NULL;
+	// result.ll.size = 0;
+
 	while (!isEmptyStack(&stack))
 	{
 		int item = pop(&stack); // 임시 스택에서 아이템을 꺼내서 홀수인 경우 원래 스택에 다시 푸시
 		if (item % 2 != 0)
 			push(s, item);
 	}
+	// *s = result;
 }
 //////////////////////////////////////////////////////////////////////////////////
 

@@ -119,25 +119,115 @@ int main()
 void createQueueFromLinkedList(LinkedList *ll, Queue *q)
 // 직접 구현 버전으로 해보기
 {
-	// 연결리스트를 큐로 복사하는 함수
-	ListNode *cur = ll->head; // 노드첫번째부터 지정
-	while (cur != NULL)
+	Queue temp;					 // [1] Queue 타입의 지역변수 선언. 아직 안의 쓰레기값 상태
+	temp.ll.head = NULL; //[2] "이 큐는 비어있다"고 명시적으로 표시 (초기화 필수)
+	temp.ll.size = 0;		 //[3] 개수도 0으로 명시적 초기화
+
+	ListNode *cur = ll->head; // [4] 원본 리스트 순회용 포인터. ll이 포인터라 ->사용
+	ListNode *tail = NULL;		// [5] temp의 현재 마지막 노드를 기억할 포인터. 아직 temp가 비어있으니 NULL로 시작.
+
+	while (cur != NULL) // [6] cur가 리스트 끝(NULL)에 도달할 때까지 반복.
 	{
-		enqueue(q, cur->item);
+		// ListNode타입을 가리키는 포인터 변수 newNode를 선언
+		// 타입 캐스팅 문법 (형변환)
+		// 함수호출 문법 (그 타입의 바이트 수를 반환)
+		// 큐는 함수가 끝난 뒤에도 계속
+		ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+		// [7] Sizeof(ListNode): ListNode 구조체 하나의 바이트 크기르 ㄹ계산
+		// [8] malloc(...): 힙에서 그 크기만큼 새 메모리 공간을 요청. 시작 주솔르 반환.
+		// [9] (ListNode *) 반환된 (void *)주소를 ListNode*로 캐스팅(타입 명시)
+		// [10] newNode: 그 주소를 저장하는 포인터 변수. 이제 "빈 상자" 하나 확보됨.
+		// [11] newNode가 가리키는 상자의 item 칸에 cur가 가리키는 원본 노드의 값을 복사
+		newNode->item = cur->item;
+		// [12] malloc 직후 next칸은 쓰레기 값이므로, 안전하게 "아직 연결 안 됨" 표시
+		newNode->next = NULL;
+		/// 여기 세줄이 까다로웠고
+
+		if (temp.ll.head == NULL)
+			// [13] temp가 지금 비어있는지 검사 (첫번째 노드를 넣는 경우인지 확인)
+			temp.ll.head = newNode;
+		// [14] 비어있다면 newNode를 temp의 첫 번째 노드(head)로 지정
+		else
+			// 큐는 뒤에 와야 하니까
+			tail->next = newNode;
+		// [15] 비어있지 않다면, 기존 마지막 노드(tail)의 next에 newNode를 연결함.
+		// tail은 포인터이므로 사용
+
+		tail = newNode;
+		//[16] 방금 추가한 newNode가 이제 새로운 마지막 노드이므로 tail을 갱신
+		temp.ll.size++;
+		// [17] temp의 원소 개수를 1 증가 (size = size +1과 동일)
+
 		cur = cur->next;
+		// [18] 원본 리스트에서 다음 노드로 이동. 이게 없으면 무한 루프에 바짐.
 	}
+	*q = temp; // 완성된 임시 큐를 실제 q에 통째로 대입
+						 //[19] while문이 다 끝난 뒤, 완성된 temp 구조체 전체를
+						 // q가 가리키는 실제 위치에 통째로 복사(대입)
+						 // *q는 q가 가리키는 실제 Queue이므로, 이 대입으로
+						 // q->ll.head와 q->ll.size가 한번에 갱신됨.
 }
 void removeOddValues(Queue *q)
 {
-	if (q == NULL) // q 가 NULL이면 그냥 리턴
+	if (q == NULL)
 		return;
-	int count = q->ll.size; // 큐에 들어간 길이만큼받아오기 위함
-	for (int i = 0; i < count; i++)
+	// [20] 만약 q자체가 잘못된 포인터(NULL)라면, 아무 작업도 하지 않고 즉시 함수 종료
+	// 방어적 코딩: 잘못된 입력으로 인한 크래시 방지
+	// [21] 짝수만 담을 임시 큐 선언
+	Queue temp;
+	// [22] 초기화 (비어있음 표시)
+	temp.ll.head = NULL;
+	// [23] 초기화
+	temp.ll.size = 0;
+	// [24] 원본 큐(q)를 순회할 포인터
+	ListNode *cur = q->ll.head;
+	// [25] temp의 마지막 노드 추적용
+	ListNode *tail = NULL;
+
+	//[26] 원본 큐 끝까지 반복
+	while (cur != NULL)
 	{
-		int item = dequeue(q); // 큐의 모든 item을 순회하면서 각 큐에서 제거
-		if (item % 2 == 0)		 // 그 아이템이 짝수인 경우 다시 큐에 추가
-			enqueue(q, item);		 // 다시 큐에 넣음
+		// [27] 지금 처리할 노드를 removed라는 이름으로 별도 저장
+		// 이렇게 해두는 이유: 바로 다음 줄에서 cur을 이동시켜버리면
+		// "지금 검사하려던 노드"를 가리킬 방법이 없어지기 때문
+		// ListNode를 가리키는 포인터 변수 하나임 -어쨋든 지금 처리할 노드
+		ListNode *removed = cur;
+		// [28] cur을 미리 다음 노드로 이동시켜 둠.
+		// 이 줄이 free보다 반드시 먼저 와야 함.
+		// 만약 removed를 free한 후에 cur->next를 읽으면
+		// 이미 해제된 메모리를 읽는 것이라 위험함.
+		cur = cur->next;
+		if (removed->item % 2 == 0)
+		// [29] removed가 가리키는 노드의 item이 짝수인지 검사 (% : 나머지 연산자)
+		{
+			// 노드를 새로 만들지 않고, 기존 노드를 재사용해서 옮김
+			removed->next = NULL;
+			// [30] 이 노드를 temp에 새로 연결할 것이므로
+			// 기존에 원본 리스트에서 갖고 있던 next값 (다음원본 노드 주소)를 끊어냄
+			// 안 끊으면 temp에 연결한 뒤에도 엉뚱한 원본 노드를 계속 가리키게 됨
+			if (temp.ll.head == NULL)
+				temp.ll.head = removed;
+			// [31] temp가 비어있으면 removed를 head로
+			else
+				tail->next = removed;
+			// [32] 아니면 tail 뒤에 연결
+			tail = removed;
+			// [33] removed가 이제 temp의 새로운 마지막 노드이므로 tail갱신
+			temp.ll.size++;
+			// [34] temp의 개수 1 증가
+		}
+		else
+		{
+			free(removed);
+			// [35] 홀수라면 이 노드는 더 이상 필요없으므로 메모리 해제
+			// removed는 이미 [27]에서 안전하게 따로 저장해뒀기 때문에
+			// cur은 이미 다음으로 이동한 상태라 안전함.
+		}
 	}
+	*q = temp;
+	// [36] 원본 큐(q)의 내용을 완성된 temp로 통째로 교체
+	// 이 시점 이전의 q->ll.head는 이미 free되었거나(홀수)
+	// temp로 옮겨졌으므로(짝수), 원본 노드들은 잃어버리지 않고 전부 처리된 상태
 }
 
 /////////////////////////////////////////////////////////////////////////////////
