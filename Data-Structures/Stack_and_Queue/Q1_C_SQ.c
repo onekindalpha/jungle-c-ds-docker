@@ -15,19 +15,19 @@ typedef struct _listnode
 {
 	int item;
 	struct _listnode *next;
-} ListNode;	// You should not change the definition of ListNode
+} ListNode; // You should not change the definition of ListNode
 
 typedef struct _linkedlist
 {
 	int size;
 	ListNode *head;
-} LinkedList;	// You should not change the definition of LinkedList
+} LinkedList; // You should not change the definition of LinkedList
 
-
+//
 typedef struct _queue
 {
 	LinkedList ll;
-} Queue;  // You should not change the definition of Queue
+} Queue; // You should not change the definition of Queue
 
 ///////////////////////// function prototypes ////////////////////////////////////
 
@@ -41,7 +41,7 @@ int isEmptyQueue(Queue *q);
 void removeAllItemsFromQueue(Queue *q);
 
 void printList(LinkedList *ll);
-ListNode * findNode(LinkedList *ll, int index);
+ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
 void removeAllItems(LinkedList *ll);
@@ -64,12 +64,10 @@ int main()
 	q.ll.head = NULL;
 	q.ll.size = 0;
 
-
 	printf("1: Insert an integer into the linked list:\n");
 	printf("2: Create the queue from the linked list:\n");
 	printf("3: Remove odd numbers from the queue:\n");
 	printf("0: Quit:\n");
-
 
 	while (c != 0)
 	{
@@ -105,43 +103,94 @@ int main()
 			printf("Choice unknown;\n");
 			break;
 		}
-
 	}
 
 	return 0;
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+// ll은 LinkedList를 가리키는 포인터이고
+// q는 Queue를 가리키는 포인터임
+// *q는 Queue를 가리킴
+// Queue q;라는 변수가 있을때 q 자체는 Queue이고, Queue *p = &q; 하면 p는 Queue의 주소를 가지고 있음
+// p->ll 이라고 하면 p가 가리키는 Queue안의 ll임
+// LinkedList 하나를 받고, 결과를 Queue에 만들어야 하기 때문임.
 
 void createQueueFromLinkedList(LinkedList *ll, Queue *q)
+// q는 Queue의 주소를 받지만, *q는 그 주소에 있는 실제 Queue를 의미함
+// *q하게 되면 실제 Queue 자체를 의미함
+// (*q).ll과 q->ll은 같은 의미임
+
 {
 	/* add your code here */
+	// 1. q는 이미 빈 Queue로 초기화된 상태로 들어옴.
+	// 2. 원본 Linked List 순회
+	ListNode *cur = ll->head;
+	// NULL이면 종료한다.
+	while (cur != NULL)
+	{
+		// 3. 각 값을 enqueue()하는 문제 - enqueue((1) Qeueu의 주소, (2) 넣을 값)
+		enqueue(q, cur->item);
+		// cur = cur->next를 한다
+		cur = cur->next;
+	}
 }
 
 void removeOddValues(Queue *q)
 {
 	/* add your code here */
+	// 1. 몇번 순회해야 하는지 알기 위함
+	int count = q->ll.size;
+	// while문을 사용하지 않은 까닭은 짝수를 다시 enqueue하기 때문에, 처음 원소를
+	// 딱 한번씩만 검사함.
+	for (int i = 0; i < count; i++)
+	{
+		// 2. 처음 원소 개수만큼 dequeue한다.
+		int a = dequeue(q);
+		// 삭제한 값을 받아서 홀수인지 짝수인지를 판단해서, 홀수면 버리고 짝수면 다시 enqueue한다.
+		if (a % 2 == 0)
+		{
+			// 짝수면 다시 enqueue한다.
+			// 근데 이렇게 타입을 지정안해줘도 되는건지.
+			enqueue(q, a);
+		}
+		// 홀수면 버린다.
+		// a는 그냥 버려지는 것임.
+	}
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
-void enqueue(Queue *q, int item) {
+// Queue q의 내부 Linked List 맨 뒤에 item을 추가한다.
+// enqueue는 뒤에 추가하고
+void enqueue(Queue *q, int item)
+{
+	// q->ll.size는 현재 노드 개수임.
 	insertNode(&(q->ll), q->ll.size, item);
 }
-
-int dequeue(Queue *q) {
+// Queue는 맨 앞 데이터를 꺼내서 반환한다.
+// dequeue 앞에서 제거한다.
+// dequeue는 반환값이 int이다.
+// 이 함수는 무조건 제거되는 것이 맞음.
+int dequeue(Queue *q)
+{
 	int item;
-
-	if (!isEmptyQueue(q)) {
+	// 큐가 비어있지 않으면
+	if (!isEmptyQueue(q))
+	{
+		// (어떤 노드의 주소) -> item 을 붙인다.
+		// 큐에서는 맨 앞의 값을 저장한다.
 		item = ((q->ll).head)->item;
+		// 맨 앞 노드인 0번 위치의 노드를 삭제한다.
 		removeNode(&(q->ll), 0);
+		// 삭제한 값을 반환한다.
 		return item;
 	}
 	return -1;
 }
 
-int isEmptyQueue(Queue *q) {
+int isEmptyQueue(Queue *q)
+{
 	if ((q->ll).size == 0)
 		return 1;
 	return 0;
@@ -158,8 +207,8 @@ void removeAllItemsFromQueue(Queue *q)
 		dequeue(q);
 }
 
-
-void printList(LinkedList *ll){
+void printList(LinkedList *ll)
+{
 
 	ListNode *cur;
 	if (ll == NULL)
@@ -175,13 +224,13 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-
 void removeAllItems(LinkedList *ll)
 {
 	ListNode *cur = ll->head;
 	ListNode *tmp;
 
-	while (cur != NULL){
+	while (cur != NULL)
+	{
 		tmp = cur->next;
 		free(cur);
 		cur = tmp;
@@ -190,8 +239,8 @@ void removeAllItems(LinkedList *ll)
 	ll->size = 0;
 }
 
-
-ListNode * findNode(LinkedList *ll, int index){
+ListNode *findNode(LinkedList *ll, int index)
+{
 
 	ListNode *temp;
 
@@ -203,7 +252,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	if (temp == NULL || index < 0)
 		return NULL;
 
-	while (index > 0){
+	while (index > 0)
+	{
 		temp = temp->next;
 		if (temp == NULL)
 			return NULL;
@@ -213,7 +263,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	return temp;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
+int insertNode(LinkedList *ll, int index, int value)
+{
 
 	ListNode *pre, *cur;
 
@@ -221,7 +272,8 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
+	if (ll->head == NULL || index == 0)
+	{
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
 		if (ll->head == NULL)
@@ -234,10 +286,10 @@ int insertNode(LinkedList *ll, int index, int value){
 		return 0;
 	}
 
-
 	// Find the nodes before and at the target position
 	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 		cur = pre->next;
 		pre->next = malloc(sizeof(ListNode));
 		if (pre->next == NULL)
@@ -253,8 +305,8 @@ int insertNode(LinkedList *ll, int index, int value){
 	return -1;
 }
 
-
-int removeNode(LinkedList *ll, int index){
+int removeNode(LinkedList *ll, int index)
+{
 
 	ListNode *pre, *cur;
 
@@ -263,7 +315,8 @@ int removeNode(LinkedList *ll, int index){
 		return -1;
 
 	// If removing first node, need to update head pointer
-	if (index == 0){
+	if (index == 0)
+	{
 		cur = ll->head->next;
 		free(ll->head);
 		ll->head = cur;
@@ -273,7 +326,8 @@ int removeNode(LinkedList *ll, int index){
 
 	// Find the nodes before and after the target position
 	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 
 		if (pre->next == NULL)
 			return -1;
