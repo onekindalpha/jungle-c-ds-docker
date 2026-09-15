@@ -17,14 +17,13 @@ typedef struct _listnode
 {
 	int item;
 	struct _listnode *next;
-} ListNode;	// You should not change the definition of ListNode
+} ListNode; // You should not change the definition of ListNode
 
 typedef struct _linkedlist
 {
 	int size;
 	ListNode *head;
-} LinkedList;	// You should not change the definition of LinkedList
-
+} LinkedList; // You should not change the definition of LinkedList
 
 typedef struct stack
 {
@@ -44,7 +43,7 @@ void removeAllItemsFromStack(Stack *s);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
-ListNode * findNode(LinkedList *ll, int index);
+ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
 
@@ -71,7 +70,6 @@ int main()
 	printf("2: Check whether expressions comprised of the characters ()[]{} is balanced:\n");
 	printf("0: Quit:\n");
 
-
 	while (c != 0)
 	{
 		printf("Please input your choice(1/2/0): ");
@@ -83,11 +81,11 @@ int main()
 			printf("Enter expressions without spaces to check whether it is balanced or not: ");
 			scanf("%s", str);
 			break;
-        case 2:
-            if(balanced(str))
-                printf("not balanced!\n");
-            else
-                printf("balanced!\n");
+		case 2:
+			if (balanced(str))
+				printf("balanced!\n");
+			else
+				printf("not balanced!\n");
 			break;
 		case 0:
 			break;
@@ -95,7 +93,6 @@ int main()
 			printf("Choice unknown;\n");
 			break;
 		}
-
 	}
 
 	return 0;
@@ -104,9 +101,46 @@ int main()
 ////////////////////////////////////////////////////////////
 int balanced(char *expression)
 {
-/* add your code here */
-}
+	/* add your code here */
+	// 스택을 하나 만들기. 빈 스택에
+	Stack s;
+	s.ll.head = NULL;
+	s.ll.size = 0;
 
+	for (int i = 0; expression[i] != '\0'; i++)
+	{
+		char c = expression[i];
+		// 여는 괄호일때
+		if (c == '(' || c == '{' || c == '[')
+		{
+			push(&s, c);
+		}
+		// 닫는 괄호일때
+		else
+		{
+			if (isEmptyStack(&s))
+			{
+				// 불균형이다. -> int로 반환해야 하므로
+				return 0;
+			}
+			else
+			{
+				char top = peek(&s);
+				if ((c == ')' && top == '(') ||
+						(c == '}' && top == '{') ||
+						(c == ']' && top == '['))
+				{
+					pop(&s); // 짝이 맞으니 이제 진짜로 제거.
+				}
+				else // 짝 안 맞으면 불균형 처리 추가
+				{
+					return 0;
+				}
+			}
+		}
+	}
+	return isEmptyStack(&s) ? 1 : 0; // 최종 반환 추가.
+}
 ////////////////////////////////////////////////////////////
 
 void removeAllItemsFromStack(Stack *s)
@@ -119,13 +153,13 @@ void removeAllItemsFromStack(Stack *s)
 	}
 }
 
-
 void removeAllItems(LinkedList *ll)
 {
 	ListNode *cur = ll->head;
 	ListNode *tmp;
 
-	while (cur != NULL){
+	while (cur != NULL)
+	{
 		tmp = cur->next;
 		free(cur);
 		cur = tmp;
@@ -154,11 +188,12 @@ int pop(Stack *s)
 		return MIN_INT;
 }
 
-int peek(Stack *s){
-    if(isEmptyStack(s))
-        return MIN_INT;
-    else
-        return ((s->ll).head)->item;
+int peek(Stack *s)
+{
+	if (isEmptyStack(s))
+		return MIN_INT;
+	else
+		return ((s->ll).head)->item;
 }
 
 int isEmptyStack(Stack *s)
@@ -169,8 +204,8 @@ int isEmptyStack(Stack *s)
 		return 0;
 }
 
-
-void printList(LinkedList *ll){
+void printList(LinkedList *ll)
+{
 
 	ListNode *cur;
 	if (ll == NULL)
@@ -187,7 +222,8 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-ListNode * findNode(LinkedList *ll, int index){
+ListNode *findNode(LinkedList *ll, int index)
+{
 
 	ListNode *temp;
 
@@ -199,7 +235,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	if (temp == NULL || index < 0)
 		return NULL;
 
-	while (index > 0){
+	while (index > 0)
+	{
 		temp = temp->next;
 		if (temp == NULL)
 			return NULL;
@@ -209,7 +246,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	return temp;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
+int insertNode(LinkedList *ll, int index, int value)
+{
 
 	ListNode *pre, *cur;
 
@@ -217,7 +255,8 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
+	if (ll->head == NULL || index == 0)
+	{
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
 		if (ll->head == NULL)
@@ -230,10 +269,10 @@ int insertNode(LinkedList *ll, int index, int value){
 		return 0;
 	}
 
-
 	// Find the nodes before and at the target position
 	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 		cur = pre->next;
 		pre->next = malloc(sizeof(ListNode));
 		if (pre->next == NULL)
@@ -249,8 +288,8 @@ int insertNode(LinkedList *ll, int index, int value){
 	return -1;
 }
 
-
-int removeNode(LinkedList *ll, int index){
+int removeNode(LinkedList *ll, int index)
+{
 
 	ListNode *pre, *cur;
 
@@ -259,7 +298,8 @@ int removeNode(LinkedList *ll, int index){
 		return -1;
 
 	// If removing first node, need to update head pointer
-	if (index == 0){
+	if (index == 0)
+	{
 		cur = ll->head->next;
 		free(ll->head);
 		ll->head = cur;
@@ -269,7 +309,8 @@ int removeNode(LinkedList *ll, int index){
 
 	// Find the nodes before and after the target position
 	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 
 		if (pre->next == NULL)
 			return -1;
